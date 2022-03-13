@@ -12,7 +12,7 @@ class Author(Base):
     name = Column(String)
 
     def __repr__(self):
-        return f"Author< ID = {self.id}, NAME = {self.name}>"
+        return f"Author< ID = {self.pk}, NAME = {self.name}>"
 
 
 class Post(Base):
@@ -26,7 +26,9 @@ class Post(Base):
     author_id = Column(Integer, ForeignKey('author.pk'))
 
     def __repr__(self):
-        return f"Post< ID = {self.id}, TITLE = {self.title}, CONTENT = {self.content}, CATEGORY = {self.category_id}>"
+        return f"Post< ID = {self.pk}, TITLE = {self.title}," \
+               f" CONTENT = {self.content}, CATEGORY = {self.category_id}," \
+               f" AUTHOR = {self.author_id}>"
 
 
 class Category(Base):
@@ -34,7 +36,7 @@ class Category(Base):
 
     pk = Column(Integer, primary_key=True)
     name = Column(String, unique=True)
-
+    posts = relationship('Post')
 
     def __repr__(self):
-        return f"Category< ID = {self.id}, NAME = {self.name}, Posts = {self.posts}>"
+        return f"Category< ID = {self.pk}, NAME = {self.name}>"
