@@ -1,48 +1,38 @@
+from contextlib import contextmanager
+
 from config import crud
 from config.crud import Session
 from models.models import Author, Post, Category
 
 
+@contextmanager
+def db():
+    session = Session()
+
+    yield session
+
+    session.close()
+
+
 def restart_db():
     crud.recreate_database()
 
-    authors = []
     posts = []
-    categories = []
 
-    for i in range(10):
-        authors.append(Author(name=f"author {i}"))
-        posts.append(Post(title=f"title {i}", content=f"content {i}"))
-        categories.append(Category(name=f"category {i}"))
+    with db() as session:
+        for i in range(10):
+            author = Author(name=f'author {i}')
+            category = Category(name=f'category {i}')
+            post = Post(title=f'title {i}', content=f'content {i}', author=author, category=category)
 
-    with Session.begin() as session:
-        session.add_all(authors)
+            posts.append(post)
+
         session.add_all(posts)
-        session.add_all(categories)
-        session.commit()
 
-    with Session.begin() as session:
-        currCat = session.query(Category).first()
-        currPost = session.query(Post).first()
-        currAuthor = session.query(Author).first()
-
-        print(currPost)
-        print(currCat)
-        print(currAuthor)
-
-        currPost.category_id = session.query(Category).first().pk
-        currPost.author_id = session.query(Author).first().pk
-
-        print(currPost)
-
-        session.add(currPost)
         session.commit()
 
 
 if __name__ == '__main__':
-    restart_db()
-    # with Session.begin() as session:
-    #     p = session.query(Post).join(Category).filter(Post.pk == 1).first()
-    #     print(p.category_id)
-# LEFT OFF HERE
-# https://docs.sqlalchemy.org/en/14/tutorial/dbapi_transactions.html
+    # restart_db()
+    pass
+
