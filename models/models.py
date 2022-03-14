@@ -1,5 +1,5 @@
 from sqlalchemy.ext.declarative import declarative_base
-from sqlalchemy import Column, Integer, String, ForeignKey
+from sqlalchemy import Column, Integer, String, ForeignKey, Table
 from sqlalchemy.orm import relationship, backref
 
 Base = declarative_base()
@@ -42,3 +42,16 @@ class Category(Base):
 
     def __repr__(self):
         return f"Category< ID = {self.pk}, NAME = {self.name}>"
+
+
+Users = Table('user',
+              Base.metadata,
+              Column('pk', Integer(), primary_key=True),
+              Column('author_id', ForeignKey('author.pk'), unique=True))
+
+
+Likes = Table('likes',
+              Base.metadata,
+              Column('pk', Integer(), primary_key=True),
+              Column('user_id', ForeignKey('user.pk', ondelete='CASCADE'), index=True),
+              Column('post_id', ForeignKey('post.pk', ondelete='CASCADE'), index=True))
