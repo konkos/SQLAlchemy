@@ -1,8 +1,9 @@
+import random
 from contextlib import contextmanager
 
 from config import crud
 from config.crud import Session
-from models.models import Author, Post, Category
+from models.models import Author, Post, Category, User, Like
 
 
 @contextmanager
@@ -31,8 +32,24 @@ def restart_db():
 
         session.commit()
 
+    # add users
+    with db() as session:
+        for author in session.query(Author).all():
+            session.execute(User.insert(), {'author_id': author.pk})
+            session.commit()
+
+    # add likes
+    with db() as session:
+        users = session.query(User).all()
+        posts = session.query(Post).all()
+
+        for post in posts:
+            random_author = users[random.randint(0, len(users)-1)]
+            session.execute(Like.insert(), {'user_id': random_author.pk, 'post_id': post.pk})
+        session.commit()
+
 
 if __name__ == '__main__':
-    # restart_db()
-    pass
+    restart_db()
 
+    pass
