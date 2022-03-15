@@ -44,14 +44,13 @@ class Category(Base):
         return f"Category< ID = {self.pk}, NAME = {self.name}>"
 
 
-Users = Table('user',
-              Base.metadata,
-              Column('pk', Integer(), primary_key=True),
-              Column('author_id', ForeignKey('author.pk'), unique=True))
+User = Table('user',
+             Base.metadata,
+             Column('pk', Integer(), primary_key=True),
+             Column('author_id', ForeignKey('author.pk'), unique=True))
 
-
-Likes = Table('likes',
-              Base.metadata,
-              Column('pk', Integer(), primary_key=True),
-              Column('user_id', ForeignKey('user.pk', ondelete='CASCADE'), index=True),
-              Column('post_id', ForeignKey('post.pk', ondelete='CASCADE'), index=True))
+Like = Table('like',
+             Base.metadata,
+             Column('pk', Integer(), primary_key=True),
+             Column('user_id', ForeignKey('user.pk', ondelete='CASCADE'), index=True),
+             Column('post_id', ForeignKey('post.pk', ondelete='CASCADE'), index=True))
