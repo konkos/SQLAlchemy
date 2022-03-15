@@ -3,7 +3,11 @@ from contextlib import contextmanager
 
 from config import crud
 from config.crud import Session
-from models.models import Author, Post, Category, User, Like
+from models.Author import Author
+from models.Category import Category
+from models.Like import Like
+from models.Post import Post
+from models.User import User
 
 
 @contextmanager
@@ -44,7 +48,7 @@ def restart_db():
         posts = session.query(Post).all()
 
         for post in posts:
-            random_author = users[random.randint(0, len(users)-1)]
+            random_author = users[random.randint(0, len(users) - 1)]
             session.execute(Like.insert(), {'user_id': random_author.pk, 'post_id': post.pk})
         session.commit()
 
@@ -52,4 +56,8 @@ def restart_db():
 if __name__ == '__main__':
     restart_db()
 
-    pass
+    with db() as session1:
+        like = session1.query(Like).first()
+        print(f"{type(like), like}")
+        user = session1.query(User).all()[7]
+        print(user)
