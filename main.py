@@ -39,8 +39,8 @@ def restart_db():
     # add users
     with db() as session:
         for author in session.query(Author).all():
-            session.execute(User.insert(), {'author_id': author.pk})
-            session.commit()
+            session.add(User(author_id=author.pk))
+        session.commit()
 
     # add likes
     with db() as session:
@@ -48,16 +48,34 @@ def restart_db():
         posts = session.query(Post).all()
 
         for post in posts:
-            random_author = users[random.randint(0, len(users) - 1)]
-            session.execute(Like.insert(), {'user_id': random_author.pk, 'post_id': post.pk})
+            random_user = users[random.randint(0, len(users) - 1)]
+            l1 = Like(user_id=random_user.pk, post_id=post.pk)
+            session.add(l1)
+            # session.execute(Like.insert(), {'user_id': random_author.pk, 'post_id': post.pk})
         session.commit()
 
 
 if __name__ == '__main__':
-    restart_db()
+    # restart_db()
 
-    with db() as session1:
-        like = session1.query(Like).first()
-        print(f"{type(like), like}")
-        user = session1.query(User).all()[7]
-        print(user)
+    with db() as s:
+
+        # author1 = s.query(Author).all()
+        # print(author1[1].posts)
+
+        # user = s.query(User).first()
+        # res = s.query(User, Author).filter(User.author_id == Author.pk).all()
+        # print(type(res[1]), res[1])
+
+        # author1 = s.query(Author).first()
+        # print(type(author1.user.pk))
+
+        post1 = s.query(Post).first()
+        print(post1.liked_by)
+
+        pass
+    # with db() as session1:
+    #     like = session1.query(Like).first()
+    #     print(f"{type(like), like}")
+    #     user = session1.query(User).all()[7]
+    #     print(user)

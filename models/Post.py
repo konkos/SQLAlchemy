@@ -17,7 +17,7 @@ class Post(Base):
     category = relationship('Category', uselist=False, backref=backref('posts'))
     author = relationship('Author', uselist=False, backref=backref('posts'))
 
-    # liked_by = relationship('like', backref=backref('posts'))
+    liked_by = relationship('Like', backref=backref('posts'))
 
     def __repr__(self):
         return f"Post< ID = {self.pk}, TITLE = {self.title}," \
