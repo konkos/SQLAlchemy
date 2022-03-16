@@ -1,6 +1,6 @@
 from sqlalchemy import Column, Integer, String, ForeignKey
 from sqlalchemy.orm import backref, relationship
-
+from .Like import like
 from models.models import Base
 
 
@@ -16,8 +16,14 @@ class Post(Base):
 
     category = relationship('Category', uselist=False, backref=backref('posts'))
     author = relationship('Author', uselist=False, backref=backref('posts'))
+    
+    liked_by = relationship('User',
+                          secondary=like,
+                          primaryjoin='User.id == like.c.user_id',
+                          secondaryjoin='Post.id == like.c.post_id',
+                          backref=backref('liked_posts'))
 
-    liked_by = relationship('Like', backref=backref('posts'))
+    # liked_by = relationship('Like', backref=backref('posts'))
 
     def __repr__(self):
         return f"Post< ID = {self.pk}, TITLE = {self.title}," \
